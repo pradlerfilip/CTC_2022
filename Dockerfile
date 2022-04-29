@@ -1,9 +1,10 @@
-FROM golang:1.16
+FROM golang:alpine
 
-WORKDIR /go/src/app
-COPY ./src .
+COPY . /app
+WORKDIR /app
 
-RUN go get -d -v
-RUN go build -v
+EXPOSE 8080
 
-CMD ["./cv04"]
+RUN go build -o main
+
+CMD ["./main"]
