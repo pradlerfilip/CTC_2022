@@ -1,11 +1,26 @@
 version: "3.9"
 services:
-  web:
-    build: .
+  rest-api:
+    container_name: rest-api
     ports:
       - "8080:8080"
-    volumes:
-          - "./:/volumes"
+    networks:
+      - my_network
+    image: "filippradler/ctc_2022:latest"
+    depends_on:
+      - mongo_db
     environment:
-      MONGODB_USER: "admin"
-      MONGODB_PASSWD: "admin"
+        - "MONGOURI=mongodb://mongo_db:27017"
+  mongo_db:
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    image: "mongo:5"
+    networks:
+      - my_network
+    volumes:
+          - ./mongo-volume:/data/db
+
+networks:
+  my_network:
+    driver: bridge
