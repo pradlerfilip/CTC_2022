@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  etcd:
+    image: bitnami/etcd:3.5.1-debian-10-r4
+    container_name: etcd
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+    volumes:
+      - etcd_data:/bitnami/etcd
+    restart: always
+  server:
+    image: ondrejsmola/ctcgrpc:main-6616dbd-220428063300
+    container_name: ctcgrpc
+    command: [ "server","--etcd=etcd:2379" ]
+    ports:
+      - "8080:8080"
+    depends_on:
+      - etcd
+volumes:
+  etcd_data:
+    driver: local
+
+
+

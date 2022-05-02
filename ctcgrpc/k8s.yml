@@ -1,0 +1,113 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: etcd
+  labels:
+    app: etcd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: etcd
+  serviceName: etcd
+  template:
+    metadata:
+      labels:
+        app: etcd
+    spec:
+      containers:
+        - name: etcd
+          image: quay.io/coreos/etcd:v3.5.2
+          ports:
+            - containerPort: 2379
+              name: client
+            - containerPort: 2380
+              name: peer
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: client
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 5
+            timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: /var/run/etcd
+              name: data
+          command:
+            - /bin/sh
+            - -c
+            - |
+              PEERS="etcd-0=http://${HOSTNAME}:2380"
+              exec etcd --name ${HOSTNAME} \
+                --listen-peer-urls http://0.0.0.0:2380 \
+                --listen-client-urls http://0.0.0.0:2379 \
+                --advertise-client-urls http://${HOSTNAME}.etcd:2379 \
+                --initial-advertise-peer-urls http://${HOSTNAME}.etcd:2380 \
+                --initial-cluster-token etcd-cluster-1 \
+                --initial-cluster ${PEERS} \
+                --initial-cluster-state new \
+                --data-dir /var/run/etcd/default.etcd
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 8Gi
+        storageClassName: local-path
+        volumeMode: Filesystem
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: etcd
+spec:
+  clusterIP: None
+  ports:
+    - port: 2379
+      name: client
+    - port: 2380
+      name: peer
+  selector:
+    app: etcd
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ctcgrpc
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ctcgrpc
+  template:
+    metadata:
+      labels:
+        app: ctcgrpc
+    spec:
+      containers:
+        - name: ctcgrpc
+          image: ondrejsmola/ctcgrpc:main-6616dbd-220428063300
+          args: [ "server","--etcd=etcd:2379","--listen=:80" ]
+          ports:
+            - containerPort: 80
+              name: default
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ctcgrpc
+spec:
+  ports:
+    - name: http
+      targetPort: default
+      port: 80
+  selector:
+    app: ctcgrpc
