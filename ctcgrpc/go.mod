@@ -1,6 +1,6 @@
-module gitlab.com/ondrej.smola/ctcgrpc
+module github.com/pradlerfilip/CTC_2022/ctcgrpc
 
-go 1.18
+go 1.17
 
 require (
 	github.com/spf13/cobra v1.4.0

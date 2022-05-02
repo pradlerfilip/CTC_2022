@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"gitlab.com/ondrej.smola/ctcgrpc/pkg/store"
+	"github.com/pradlerfilip/CTC_2022/ctcgrpc/pkg/store"
 )
 
 type Client interface {
@@ -34,5 +34,6 @@ func (g *grpcClient) Put(ctx context.Context, key, value string) error {
 }
 
 func (g *grpcClient) Delete(ctx context.Context, key string) error {
-	panic("implement me")
+	_, err := g.c.Delete(ctx, &GetRequest{Key: key})
+	return err
 }

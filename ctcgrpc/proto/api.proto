@@ -3,7 +3,7 @@ syntax = "proto3";
 
 package core;
 
-option go_package = "gitlab.com/ondrej.smola/ctcgrpc/pkg/api";
+option go_package = "github.com/filippradler/ctcgrpc/pkg/api";
 
 
 message GetRequest {
@@ -25,4 +25,5 @@ message PutResponse {
 service Api {
   rpc Get (GetRequest) returns (GetResponse);
   rpc Put (PutRequest) returns (PutResponse);
+  rpc Delete (GetRequest) returns (PutResponse);
 }

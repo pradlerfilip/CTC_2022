@@ -94,7 +94,7 @@ spec:
     spec:
       containers:
         - name: ctcgrpc
-          image: ondrejsmola/ctcgrpc:main-6616dbd-220428063300
+          image: filippradler/ctcgrpc:latest
           args: [ "server","--etcd=etcd:2379","--listen=:80" ]
           ports:
             - containerPort: 80

@@ -3,7 +3,7 @@ package store
 import (
 	"context"
 	"fmt"
-	"gitlab.com/ondrej.smola/ctcgrpc/pkg"
+	"github.com/pradlerfilip/CTC_2022/ctcgrpc/pkg"
 	v3 "go.etcd.io/etcd/client/v3"
 )
 
@@ -43,5 +43,6 @@ func (e *etcd) Put(ctx context.Context, key, value string) error {
 }
 
 func (e *etcd) Delete(ctx context.Context, key string) error {
-	panic("implement me")
+	_, err := e.cl.Delete(ctx, key)
+	return err
 }

@@ -3,9 +3,9 @@ package client
 import (
 	"context"
 	"fmt"
+	"github.com/pradlerfilip/CTC_2022/ctcgrpc/pkg/api"
+	"github.com/pradlerfilip/CTC_2022/ctcgrpc/pkg/util"
 	"github.com/spf13/cobra"
-	"gitlab.com/ondrej.smola/ctcgrpc/pkg/api"
-	"gitlab.com/ondrej.smola/ctcgrpc/pkg/util"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"time"
@@ -32,7 +32,7 @@ func Cmd() *cobra.Command {
 
 	f.StringVarP(&endpoint, "endpoint", "e", "localhost:8080", "endpoint")
 
-	cmd.AddCommand(getCmd(), putCmd())
+	cmd.AddCommand(getCmd(), putCmd(), deleteCmd())
 	return cmd
 }
 
@@ -63,6 +63,22 @@ func putCmd() *cobra.Command {
 			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 			defer cancel()
 			err := cli.Put(ctx, key, val)
+			util.ExitOnError(err)
+		},
+	}
+}
+
+func deleteCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:  "delete key",
+		Args: cobra.MinimumNArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			key := args[0]
+
+			cli := newClient()
+			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+			defer cancel()
+			err := cli.Delete(ctx, key)
 			util.ExitOnError(err)
 		},
 	}
