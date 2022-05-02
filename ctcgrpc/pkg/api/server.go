@@ -29,8 +29,8 @@ func (s *Server) Put(ctx context.Context, request *PutRequest) (*PutResponse, er
 	return &PutResponse{}, s.st.Put(ctx, request.Key, request.Value)
 }
 
-func (s *Server) Delete(ctx context.Context, request *GetRequest) (*PutResponse, error) {
-	return &PutResponse{}, s.st.Delete(ctx, request.Key)
+func (s *Server) Delete(ctx context.Context, request *DeleteRequest) (*DeleteResponse, error) {
+	return &DeleteResponse{}, s.st.Delete(ctx, request.Key)
 }
 
 func (s *Server) mustEmbedUnimplementedApiServer() {

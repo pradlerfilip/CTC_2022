@@ -22,8 +22,16 @@ message GetResponse{
 message PutResponse {
 }
 
+message DeleteRequest {
+  string key = 1;
+}
+
+message DeleteResponse {
+
+}
+
 service Api {
   rpc Get (GetRequest) returns (GetResponse);
   rpc Put (PutRequest) returns (PutResponse);
-  rpc Delete (GetRequest) returns (PutResponse);
+  rpc Delete (DeleteRequest) returns (DeleteResponse);
 }

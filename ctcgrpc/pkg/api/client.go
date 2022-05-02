@@ -34,6 +34,6 @@ func (g *grpcClient) Put(ctx context.Context, key, value string) error {
 }
 
 func (g *grpcClient) Delete(ctx context.Context, key string) error {
-	_, err := g.c.Delete(ctx, &GetRequest{Key: key})
+	_, err := g.c.Delete(ctx, &DeleteRequest{Key: key})
 	return err
 }

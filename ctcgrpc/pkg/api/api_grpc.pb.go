@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type ApiClient interface {
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	Put(ctx context.Context, in *PutRequest, opts ...grpc.CallOption) (*PutResponse, error)
-	Delete(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*PutResponse, error)
+	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 }
 
 type apiClient struct {
@@ -53,8 +53,8 @@ func (c *apiClient) Put(ctx context.Context, in *PutRequest, opts ...grpc.CallOp
 	return out, nil
 }
 
-func (c *apiClient) Delete(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*PutResponse, error) {
-	out := new(PutResponse)
+func (c *apiClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
+	out := new(DeleteResponse)
 	err := c.cc.Invoke(ctx, "/core.Api/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func (c *apiClient) Delete(ctx context.Context, in *GetRequest, opts ...grpc.Cal
 type ApiServer interface {
 	Get(context.Context, *GetRequest) (*GetResponse, error)
 	Put(context.Context, *PutRequest) (*PutResponse, error)
-	Delete(context.Context, *GetRequest) (*PutResponse, error)
+	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	mustEmbedUnimplementedApiServer()
 }
 
@@ -82,7 +82,7 @@ func (UnimplementedApiServer) Get(context.Context, *GetRequest) (*GetResponse, e
 func (UnimplementedApiServer) Put(context.Context, *PutRequest) (*PutResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Put not implemented")
 }
-func (UnimplementedApiServer) Delete(context.Context, *GetRequest) (*PutResponse, error) {
+func (UnimplementedApiServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedApiServer) mustEmbedUnimplementedApiServer() {}
@@ -135,7 +135,7 @@ func _Api_Put_Handler(srv interface{}, ctx context.Context, dec func(interface{}
 }
 
 func _Api_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetRequest)
+	in := new(DeleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -147,7 +147,7 @@ func _Api_Delete_Handler(srv interface{}, ctx context.Context, dec func(interfac
 		FullMethod: "/core.Api/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApiServer).Delete(ctx, req.(*GetRequest))
+		return srv.(ApiServer).Delete(ctx, req.(*DeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
